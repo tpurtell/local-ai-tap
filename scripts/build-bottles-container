@@ -14,7 +14,11 @@ git -C "$tap" remote set-url origin https://github.com/tpurtell/local-ai-tap.git
 if brew commands | grep -qx trust; then
   brew trust --tap tpurtell/local-ai
 fi
-mapfile -t formulae < <(brew formulae --tap=tpurtell/local-ai | sort)
+shopt -s globstar nullglob
+formulae=()
+for file in "$tap"/Formula/**/*.rb; do
+  formulae+=("tpurtell/local-ai/$(basename "$file" .rb)")
+done
 [[ ${#formulae[@]} -gt 0 ]]
 brew install --build-bottle "${formulae[@]}"
 brew test "${formulae[@]}"
