@@ -26,6 +26,7 @@ with exact SHA-256 values, source commit, and build environment.
   passed an ordinary fresh `brew install`, receipt verification, package
   tests, linkage checks, and the ABI check. This additionally verifies the
   AMD64 artifacts against an older libc than their build host.
+  The separate source-install CI job also passed, verifying the fallback path.
 
 `rdma-core` bottles use the standard `/home/linuxbrew/.linuxbrew/Cellar`.
 Homebrew marks the two tool bottles relocatable, but their rdma-core dependency
