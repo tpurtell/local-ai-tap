@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+# Run from an AMD64 RDMA host against native ARM64 peers (or vice versa).
+set -euo pipefail
+prefix=${HOMEBREW_PREFIX:-/home/linuxbrew/.linuxbrew}
+if (($# == 0)); then
+  set -- ostrich dodo emu kiwi
+fi
+scratch=$(mktemp -d)
+remote_dir=
+remote_host=
+cleanup() {
+  if [[ -n $remote_dir ]]; then
+    ssh -o BatchMode=yes "$remote_host" "rm -rf -- '$remote_dir'" || true
+  fi
+  rm -rf -- "$scratch"
+}
+trap cleanup EXIT
+dd if=/dev/urandom of="$scratch/source" bs=1M count=16 status=none
+expected=$(sha256sum "$scratch/source" | cut -d' ' -f1)
+for remote_host in "$@"; do
+  remote_dir=$(ssh -o BatchMode=yes "$remote_host" 'mktemp -d /tmp/local-ai-tap-test.XXXXXXXX')
+  [[ $remote_dir =~ ^/tmp/local-ai-tap-test\.[[:alnum:]]+$ ]]
+  printf '\nTesting %s <-> %s\n' "$(hostname)" "$remote_host"
+  actual=$("$prefix/bin/rdmapipe" "--remote-path=$prefix/bin/rdmapipe" \
+    "$remote_host" -- sha256sum < "$scratch/source")
+  [[ ${actual%% *} == "$expected" ]]
+  "$prefix/bin/rdmasync" -a --rdma=required "--rsync-path=$prefix/bin/rdmasync" \
+    "$scratch/source" "$remote_host:$remote_dir/source"
+  actual=$(ssh -o BatchMode=yes "$remote_host" "sha256sum '$remote_dir/source'")
+  [[ ${actual%% *} == "$expected" ]]
+  ssh -o BatchMode=yes "$remote_host" \
+    "'$prefix/bin/rdmapipe' --send < '$remote_dir/source'" |
+    "$prefix/bin/rdmapipe" --recv > "$scratch/pipe-return"
+  cmp "$scratch/source" "$scratch/pipe-return"
+  "$prefix/bin/rdmasync" -a --rdma=required "--rsync-path=$prefix/bin/rdmasync" \
+    "$remote_host:$remote_dir/source" "$scratch/sync-return"
+  cmp "$scratch/source" "$scratch/sync-return"
+  rm "$scratch/sync-return" "$scratch/pipe-return"
+  ssh -o BatchMode=yes "$remote_host" "rm -rf -- '$remote_dir'"
+  remote_dir=
+  printf 'PASS: both tools, both directions, SHA-256/byte comparison\n'
+done

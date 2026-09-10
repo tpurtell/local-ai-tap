@@ -1,0 +1,32 @@
+name: Homebrew Linux AMD64
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: Homebrew/actions/setup-homebrew@c722b5d961eb7f3ebec81ec2e5584faf7c3cff5d
+      - name: Install the checked-out tap
+        run: |
+          brew tap tpurtell/local-ai "$GITHUB_WORKSPACE"
+          if brew commands | grep -qx trust; then
+            brew trust --tap tpurtell/local-ai
+          fi
+      - name: Check, build, and test
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+        run: |
+          brew style tpurtell/local-ai/rdma-core tpurtell/local-ai/rdmapipe tpurtell/local-ai/rdmasync
+          brew audit --strict tpurtell/local-ai/rdma-core tpurtell/local-ai/rdmapipe tpurtell/local-ai/rdmasync
+          brew install --build-from-source tpurtell/local-ai/rdma-core tpurtell/local-ai/rdmapipe tpurtell/local-ai/rdmasync
+          brew test tpurtell/local-ai/rdma-core tpurtell/local-ai/rdmapipe tpurtell/local-ai/rdmasync
+          brew linkage --test tpurtell/local-ai/rdma-core tpurtell/local-ai/rdmapipe tpurtell/local-ai/rdmasync
