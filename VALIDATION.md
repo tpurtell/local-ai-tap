@@ -1,5 +1,39 @@
 # Release validation — 2026-09-10
 
+## Published binary bottles
+
+[Bottle release](https://github.com/tpurtell/local-ai-tap/releases/tag/bottles-20260910-1)
+contains six archives: ARM64 and AMD64 builds of rdma-core 65.0, rdmapipe
+0.1.0, and rdmasync 0.1.0. The release also includes each Homebrew bottle JSON
+and a [manifest](https://github.com/tpurtell/local-ai-tap/releases/download/bottles-20260910-1/BOTTLE-MANIFEST.json)
+with exact SHA-256 values, source commit, and build environment.
+
+- Built natively with `brew install --build-bottle` on ostrich and raptor,
+  using Homebrew's ARMv8 and Core 2 CPU baselines. No cross compilation.
+- All 73 packaged ELF files on each architecture require glibc symbols no
+  newer than 2.38, below Homebrew's 2.39 baseline. The native build hosts use
+  glibc 2.39 (ostrich) and 2.43 (raptor); the manifest preserves this distinction.
+- Every anonymous public bottle download matched its declared SHA-256.
+- All three installed receipts on **raptor, ostrich, dodo, emu, and kiwi**
+  report `poured_from_bottle=true` after reinstalling from the public release.
+- All three Homebrew tests and linkage checks passed on all five hosts after
+  pouring. Homebrew's `ibv_devices` discovered the expected hardware.
+- `scripts/test-fabric ostrich dodo emu kiwi` passed using the poured packages:
+  both tools, both transfer directions, every raptor/Spark pair, with random
+  16 MiB payloads and SHA-256/exact byte comparisons. rdmasync used
+  `--rdma=required` to exclude TCP fallback.
+- The [Ubuntu 24.04 bottle CI job](https://github.com/tpurtell/local-ai-tap/actions/runs/34447015267)
+  passed an ordinary fresh `brew install`, receipt verification, package
+  tests, linkage checks, and the ABI check. This additionally verifies the
+  AMD64 artifacts against an older libc than their build host.
+
+`rdma-core` bottles use the standard `/home/linuxbrew/.linuxbrew/Cellar`.
+Homebrew marks the two tool bottles relocatable, but their rdma-core dependency
+means the complete installation should use the standard Linux prefix.
+The bottle archives contain each project's applicable license files.
+
+## Initial source release verification
+
 All three formulae were built from their published source archives. ARM64
 builds ran natively on DGX Sparks; AMD64 builds ran natively on raptor.
 `file -L` confirmed aarch64 and x86-64 executables. No cross compilation.
