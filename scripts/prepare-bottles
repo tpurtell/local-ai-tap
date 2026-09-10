@@ -64,7 +64,7 @@ for build in args.builds:
                 records[key] = {
                     "formula": full_name, "version": version[0], "rebuild": version[1],
                     "architecture": arch, "filename": remote_name, "sha256": digest,
-                    "cellar": bottle["cellar"], "tap_commit": commit, "build_image": image,
+                    "cellar": bottle["cellar"], "tap_commit": commit, "build_environment": image,
                     "built_on": artifact["tab"].get("built_on"),
                 }
                 copies.append((archive, remote_name))

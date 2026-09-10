@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+# Rebuild installed tap packages for bottling on a native, dedicated host.
+set -euo pipefail
+if (($# != 2)); then
+  echo "Usage: $0 RELEASE_TAG EMPTY_OUTPUT_DIRECTORY" >&2
+  exit 2
+fi
+release_tag=$1
+[[ $release_tag =~ ^[[:alnum:]][[:alnum:]._-]*$ ]]
+case $(uname -sm) in
+  'Linux x86_64'|'Linux aarch64') ;;
+  *) echo 'Use a native Linux AMD64 or ARM64 host.' >&2; exit 1 ;;
+esac
+root=$(git -C "$(dirname "$0")/.." rev-parse --show-toplevel)
+[[ -z $(git -C "$root" status --porcelain --untracked-files=no) ]]
+mkdir -p "$2"
+output=$(cd "$2" && pwd)
+[[ -z $(ls -A "$output") ]]
+export HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_CLEANUP=1
+export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 HOMEBREW_NO_AUTOREMOVE=1
+export HOMEBREW_NO_ASK=1 HOMEBREW_MAKE_JOBS=8
+export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
+commit=$(git -C "$root" rev-parse HEAD)
+brew tap tpurtell/local-ai https://github.com/tpurtell/local-ai-tap.git
+tap=$(brew --repository tpurtell/local-ai)
+[[ -z $(git -C "$tap" status --porcelain --untracked-files=no) ]]
+git -C "$tap" fetch origin "$commit"
+git -C "$tap" checkout --detach "$commit"
+if brew commands | grep -qx trust; then brew trust --tap tpurtell/local-ai; fi
+printf '%s\n' "$commit" > "$output/tap-commit.txt"
+printf 'native:%s:%s\n' "$(hostname)" "$(uname -sm)" > "$output/build-image.txt"
+cd "$output"
+exec > >(tee build.log) 2>&1
+brew config
+shopt -s globstar nullglob
+formulae=()
+installed=()
+for file in "$tap"/Formula/**/*.rb; do
+  name="tpurtell/local-ai/$(basename "$file" .rb)"
+  formulae+=("$name")
+  if brew list --versions "$name" >/dev/null 2>&1; then installed+=("$name"); fi
+done
+[[ ${#formulae[@]} -gt 0 ]]
+# Preserve the existing kegs before replacing just this tap's packages.
+if ((${#installed[@]})); then
+  mkdir previous-kegs
+  for name in "${installed[@]}"; do
+    keg=$(brew --prefix "$name")
+    tar -czf "previous-kegs/${name##*/}.tar.gz" -C "$(dirname "$keg")" "$(basename "$keg")"
+  done
+  brew uninstall --ignore-dependencies "${installed[@]}"
+fi
+brew install --build-bottle "${formulae[@]}"
+brew test "${formulae[@]}"
+brew linkage --test "${formulae[@]}"
+"$root/scripts/check-bottle-abi" "${formulae[@]}"
+brew bottle --json --root-url="https://github.com/tpurtell/local-ai-tap/releases/download/$release_tag" "${formulae[@]}"

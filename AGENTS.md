@@ -5,8 +5,10 @@
   normal release process. Keep source builds available as a fallback.
 - Build ARM64 natively on a DGX Spark (ostrich, dodo, emu, or kiwi); build
   AMD64 natively on raptor. Do not cross-compile. Native containers are fine.
-- Use Homebrew's default bottle CPU baseline and the pinned build images in
-  `scripts/build-bottles`. Do not use host-specific CPU tuning.
+- Use Homebrew's default bottle CPU baseline and check that all packaged ELF
+  files require glibc no newer than Homebrew's 2.39 baseline. Do not use
+  host-specific CPU tuning. Pinned clean build images are also available via
+  `scripts/build-bottles` when container registry downloads are practical.
 - Test installation from the actual published bottles, check receipts and
   linkage, and run `scripts/test-fabric` on the fleet before declaring a
   release complete.
