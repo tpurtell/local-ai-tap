@@ -15,6 +15,8 @@ builds ran natively on DGX Sparks; AMD64 builds ran natively on raptor.
 Versions: rdmapipe 0.1.0, rdmasync 0.1.0, rdma-core 65.0.
 
 `brew style` and `brew audit --strict --online` passed for all three formulae.
+The [GitHub AMD64 build/test run](https://github.com/tpurtell/local-ai-tap/actions/runs/34444465480)
+also passed for these formula revisions.
 `rdmasync --version` advertises RDMA-bulk, ACLs, xattrs, OpenSSL, xxHash, zstd,
 LZ4, and zlib. Linkage resolves libibverbs and compression/checksum libraries
 to Homebrew dependencies. Homebrew's rdma-core `ibv_devices` discovers the

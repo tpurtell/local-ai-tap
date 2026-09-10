@@ -27,7 +27,7 @@ formulae build from source on the machine's native architecture. No cross
 compiler is used. Both tools must be installed on each transfer endpoint.
 
 This repository intentionally uses the name `local-ai-tap`. Add it with its
-explicit URL, since Homebrew normally looks for a `homebrew-` repository prefix:
+explicit URL, since Homebrew normally looks for a `homebrew-` repository prefix.
 
 RDMA requires Linux kernel drivers, a configured RDMA fabric, and access to
 `/dev/infiniband`. macOS is not supported by these RDMA tools.
