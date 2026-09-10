@@ -6,6 +6,7 @@ class RdmaCore < Formula
   license any_of: ["GPL-2.0-only", "BSD-2-Clause"]
 
   depends_on "cmake" => :build
+  depends_on "docutils" => :build
   depends_on "ninja" => :build
   depends_on "pandoc" => :build
   depends_on "pkgconf" => :build

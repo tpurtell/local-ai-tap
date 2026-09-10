@@ -1,5 +1,7 @@
 # Local AI Homebrew tap
 
+Local AI tools on Linux including DGX Spark.
+
 Homebrew packages for Linux ARM64 (aarch64) and AMD64 (x86_64):
 
 - `rdmapipe`: stream Unix pipes over RDMA.
@@ -18,3 +20,7 @@ brew tap tpurtell/local-ai https://github.com/tpurtell/local-ai-tap.git
 
 RDMA requires Linux kernel drivers, a configured RDMA fabric, and access to
 `/dev/infiniband`. macOS is not supported by these RDMA tools.
+
+The tap's packaging is MIT licensed. Packaged projects retain their own
+licenses: MIT for rdmapipe, GPL-3.0-or-later for rdmasync, and rdma-core's
+upstream dual licenses and component-specific notices.
