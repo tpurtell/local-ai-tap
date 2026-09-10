@@ -5,6 +5,13 @@ class RdmaCore < Formula
   sha256 "714881af1c875f335aee55e94e770894963af3b9bbb6c1248e4a279058dcba58"
   license any_of: ["GPL-2.0-only", "BSD-2-Clause"]
 
+  bottle do
+    root_url "https://github.com/tpurtell/local-ai-tap/releases/download/bottles-20260910-1"
+    rebuild 1
+    sha256 arm64_linux:  "87c633ca8ca0bb70583a7301892a5f2e4115486974b767d4e02af80530545c92"
+    sha256 x86_64_linux: "6033b6ac7ff06179eb2087b8b07a3738bf3c625925fc52563e4fc95d192f9b9e"
+  end
+
   depends_on "cmake" => :build
   depends_on "docutils" => :build
   depends_on "ninja" => :build

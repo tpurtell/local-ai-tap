@@ -5,6 +5,13 @@ class Rdmasync < Formula
   sha256 "66a81c505a844e8dbcab9162f97c365a969ebc0986d098bdd37316c6eb8b0d0d"
   license "GPL-3.0-or-later"
 
+  bottle do
+    root_url "https://github.com/tpurtell/local-ai-tap/releases/download/bottles-20260910-1"
+    rebuild 1
+    sha256 cellar: :any, arm64_linux:  "923f6c4f6abc139e46a0fa336dac732d99d255e31030bbe0a5889178bd571873"
+    sha256 cellar: :any, x86_64_linux: "8a8cd376a1548c47d7b57ae8b2e6d8254dc7e02445d75700e2f0294866dd69c8"
+  end
+
   depends_on "acl"
   depends_on :linux
   depends_on "lz4"

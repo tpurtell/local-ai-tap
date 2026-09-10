@@ -1,4 +1,4 @@
-name: Homebrew Linux AMD64
+name: Homebrew Linux AMD64 source and bottles
 
 on:
   push:
@@ -10,8 +10,12 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        install: [bottle, source]
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: Homebrew/actions/setup-homebrew@c722b5d961eb7f3ebec81ec2e5584faf7c3cff5d
@@ -24,9 +28,22 @@ jobs:
       - name: Check, build, and test
         env:
           HOMEBREW_NO_AUTO_UPDATE: "1"
+          INSTALL_MODE: ${{ matrix.install }}
         run: |
-          brew style tpurtell/local-ai/rdma-core tpurtell/local-ai/rdmapipe tpurtell/local-ai/rdmasync
-          brew audit --strict tpurtell/local-ai/rdma-core tpurtell/local-ai/rdmapipe tpurtell/local-ai/rdmasync
-          brew install --build-from-source tpurtell/local-ai/rdma-core tpurtell/local-ai/rdmapipe tpurtell/local-ai/rdmasync
-          brew test tpurtell/local-ai/rdma-core tpurtell/local-ai/rdmapipe tpurtell/local-ai/rdmasync
-          brew linkage --test tpurtell/local-ai/rdma-core tpurtell/local-ai/rdmapipe tpurtell/local-ai/rdmasync
+          shopt -s globstar nullglob
+          formulae=()
+          for file in Formula/**/*.rb; do
+            formulae+=("tpurtell/local-ai/$(basename "$file" .rb)")
+          done
+          brew style "${formulae[@]}"
+          brew audit --strict "${formulae[@]}"
+          scripts/check-bottles --download
+          if [[ "$INSTALL_MODE" == bottle ]]; then
+            brew install "${formulae[@]}"
+            scripts/check-installed-bottles
+          else
+            brew install --build-from-source "${formulae[@]}"
+          fi
+          brew test "${formulae[@]}"
+          brew linkage --test "${formulae[@]}"
+          scripts/check-bottle-abi "${formulae[@]}"
