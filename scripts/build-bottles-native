@@ -46,7 +46,7 @@ done
 if ((${#installed[@]})); then
   mkdir previous-kegs
   for name in "${installed[@]}"; do
-    keg=$(brew --prefix "$name")
+    keg=$(realpath "$(brew --prefix "$name")")
     tar -czf "previous-kegs/${name##*/}.tar.gz" -C "$(dirname "$keg")" "$(basename "$keg")"
   done
   brew uninstall --ignore-dependencies "${installed[@]}"

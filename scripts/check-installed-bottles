@@ -1,0 +1,16 @@
+#!/usr/bin/env python3
+"""Verify every tap formula was actually installed by pouring a bottle.
+
+SPDX-License-Identifier: MIT
+"""
+import json
+from pathlib import Path
+import subprocess
+
+root = Path(__file__).resolve().parent.parent
+for formula in sorted((root / "Formula").rglob("*.rb")):
+    name = f"tpurtell/local-ai/{formula.stem}"
+    prefix = Path(subprocess.check_output(["brew", "--prefix", name], text=True).strip())
+    receipt = json.loads((prefix / "INSTALL_RECEIPT.json").read_text())
+    assert receipt["poured_from_bottle"], f"{name} was built from source, not poured"
+    print(f"PASS {name}: poured_from_bottle=true")
