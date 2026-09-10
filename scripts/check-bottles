@@ -1,0 +1,33 @@
+#!/usr/bin/env python3
+"""Require published, checksummed ARM64 and AMD64 bottles for every formula.
+
+SPDX-License-Identifier: MIT
+"""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+from urllib.request import urlopen
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--download", action="store_true", help="Download and verify all bottle assets")
+args = parser.parse_args()
+root = Path(__file__).resolve().parent.parent
+names = [f"tpurtell/local-ai/{p.stem}" for p in sorted((root / "Formula").rglob("*.rb"))]
+assert names, "No formulae found"
+info = json.loads(subprocess.check_output(["brew", "info", "--json=v2", *names], text=True))
+for formula in info["formulae"]:
+    files = formula.get("bottle", {}).get("stable", {}).get("files", {})
+    for arch in ("arm64_linux", "x86_64_linux"):
+        assert arch in files, f"{formula['name']}: missing {arch} bottle"
+        bottle = files[arch]
+        assert len(bottle["sha256"]) == 64
+        assert bottle["url"].startswith("https://github.com/tpurtell/local-ai-tap/releases/download/")
+        if args.download:
+            digest = hashlib.sha256()
+            with urlopen(bottle["url"], timeout=120) as response:
+                while chunk := response.read(1024 * 1024):
+                    digest.update(chunk)
+            assert digest.hexdigest() == bottle["sha256"], f"Checksum mismatch: {bottle['url']}"
+        print(f"PASS {formula['name']} {arch}" + (" download/SHA-256" if args.download else " metadata"))

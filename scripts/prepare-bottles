@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+"""Validate both native builds and stage immutable GitHub Release assets.
+
+SPDX-License-Identifier: MIT
+"""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import re
+import shutil
+import subprocess
+from urllib.parse import unquote
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("release_tag")
+parser.add_argument("output", type=Path)
+parser.add_argument("builds", type=Path, nargs=2)
+args = parser.parse_args()
+root = Path(__file__).resolve().parent.parent
+assert re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", args.release_tag)
+root_url = f"https://github.com/tpurtell/local-ai-tap/releases/download/{args.release_tag}"
+formulae = {p.stem: p for p in (root / "Formula").rglob("*.rb")}
+expected = {(name, arch) for name in formulae for arch in ("arm64_linux", "x86_64_linux")}
+records = {}
+copies = []
+versions = {}
+
+
+def without_bottle(source):
+    return re.sub(r"\n  bottle do\n.*?^  end\n", "", source, flags=re.M | re.S)
+
+
+for build in args.builds:
+    commit = (build / "tap-commit.txt").read_text().strip()
+    image = (build / "build-image.txt").read_text().strip()
+    for metadata_path in sorted(build.glob("*.bottle.json")):
+        metadata = json.loads(metadata_path.read_text())
+        for full_name, data in metadata.items():
+            formula, bottle = data["formula"], data["bottle"]
+            name = formula["name"]
+            assert name in formulae, f"Unknown formula: {name}"
+            assert full_name == f"tpurtell/local-ai/{name}"
+            assert formula["tap_git_revision"] == commit, "Build commit mismatch"
+            source = subprocess.check_output(
+                ["git", "show", f"{commit}:{formula['tap_git_path']}"], cwd=root, text=True
+            )
+            assert without_bottle(source) == without_bottle(formulae[name].read_text()), (
+                f"Formula changed since build: {name}"
+            )
+            version = (formula["pkg_version"], bottle["rebuild"])
+            assert versions.setdefault(name, version) == version, f"Version mismatch: {name}"
+            assert bottle["root_url"] == root_url, "Release URL mismatch"
+            for arch, artifact in bottle["tags"].items():
+                key = (name, arch)
+                assert key in expected and key not in records, f"Unexpected/duplicate bottle: {key}"
+                local_name = artifact["local_filename"]
+                remote_name = unquote(artifact["filename"])
+                assert Path(local_name).name == local_name
+                assert Path(remote_name).name == remote_name
+                archive = build / local_name
+                digest = hashlib.file_digest(archive.open("rb"), "sha256").hexdigest()
+                assert digest == artifact["sha256"], f"Checksum mismatch: {archive}"
+                records[key] = {
+                    "formula": full_name, "version": version[0], "rebuild": version[1],
+                    "architecture": arch, "filename": remote_name, "sha256": digest,
+                    "cellar": bottle["cellar"], "tap_commit": commit, "build_image": image,
+                    "built_on": artifact["tab"].get("built_on"),
+                }
+                copies.append((archive, remote_name))
+        copies.append((metadata_path, metadata_path.name))
+
+assert records.keys() == expected, f"Missing bottles: {expected - records.keys()}"
+assert not args.output.exists(), "Use a new staging directory; published assets must not be replaced"
+args.output.mkdir(parents=True)
+for path, name in copies:
+    shutil.copy2(path, args.output / name)
+(args.output / "BOTTLE-MANIFEST.json").write_text(json.dumps({
+    "release": args.release_tag, "root_url": root_url,
+    "bottles": [records[key] for key in sorted(records)],
+}, indent=2) + "\n")
+print(f"Validated and staged {len(records)} bottles in {args.output}")
