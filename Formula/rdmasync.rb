@@ -35,10 +35,12 @@ class Rdmasync < Formula
 
   test do
     assert_match "rdmasync  version #{version}", shell_output("#{bin}/rdmasync --version")
+    assert_match "RDMA-bulk", shell_output("#{bin}/rdmasync --version")
     assert_match "--rdma", shell_output("#{bin}/rdmasync --help")
     (testpath/"source/file").write("RDMA sync test\n" * 1024)
     system bin/"rdmasync", "-a", "source/", "destination/"
     assert_equal (testpath/"source/file").read, (testpath/"destination/file").read
+    (testpath/"source/file").unlink
     (testpath/"source/file").write("updated\n")
     system bin/"rdmasync", "-ac", "--delete", "source/", "destination/"
     assert_equal "updated\n", (testpath/"destination/file").read
