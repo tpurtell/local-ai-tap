@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+set -euo pipefail
+[[ $(uname -m) == "$EXPECTED_ARCH" ]]
+cd /output
+exec > >(tee build.log) 2>&1
+uname -sm
+ldd --version
+brew config
+brew tap tpurtell/local-ai /tap
+tap=$(brew --repository tpurtell/local-ai)
+git -C "$tap" checkout --detach "$(cat /output/tap-commit.txt)"
+git -C "$tap" remote set-url origin https://github.com/tpurtell/local-ai-tap.git
+if brew commands | grep -qx trust; then
+  brew trust --tap tpurtell/local-ai
+fi
+mapfile -t formulae < <(brew formulae --tap=tpurtell/local-ai | sort)
+[[ ${#formulae[@]} -gt 0 ]]
+brew install --build-bottle "${formulae[@]}"
+brew test "${formulae[@]}"
+brew linkage --test "${formulae[@]}"
+brew bottle --json --root-url="$BOTTLE_ROOT_URL" "${formulae[@]}"
