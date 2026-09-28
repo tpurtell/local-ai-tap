@@ -44,7 +44,7 @@ class Sparknest < Formula
   test do
     assert_match version.to_s, shell_output("#{bin}/nest --version")
     assert_match version.to_s, shell_output("#{bin}/sparknestd --version")
-    assert_match "drop_caches", shell_output("#{bin}/sparknest-drop-page-cache --help")
+    assert_match "Usage: sparknest-drop-page-cache", shell_output("#{bin}/sparknest-drop-page-cache --help")
     assert_match "restart sparknestd@", shell_output("#{bin}/sparknest-allow-restart --help")
 
     # A one-node cluster over TCP without a mount: import, offload to an
