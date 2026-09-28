@@ -104,3 +104,34 @@ rdma-core v65.0.tar.gz
 The two tool repositories have annotated `v0.1.0` tags and public GitHub
 releases. rdmasync's release includes generated configure files and manual
 pages; package installation does not fetch moving generated upstream files.
+
+## sparknest 0.1.0 (bottles-20260928-2)
+
+Source: <https://github.com/tpurtell/sparknest/releases/tag/v0.1.0>, archive
+`sparknest-0.1.0.tar.gz` SHA-256
+`ce7d16e98c8b1663859782933826c76735158429b4fab007ce187acee37a7e5e`
+(downloaded anonymously and matched).
+
+Bottles, built with `scripts/build-bottles-native bottles-20260928-2 DIR
+sparknest` from tap commit 26bcc19 (only sparknest; other formulae keep their
+bottles):
+
+```text
+sparknest-0.1.0.arm64_linux.bottle.1.tar.gz   rhea (DGX Spark, aarch64)
+e1d012f3b702c405c9781d052e2beb9e90400ca8eb501e096b72127faa6f3bf3
+sparknest-0.1.0.x86_64_linux.bottle.1.tar.gz  raptor (x86_64)
+36f39bf0c9ab48f1dcac8799bab293743dd169d3abb6f0fbf3b3b75e130c649a
+```
+
+Both builds passed `brew test` (a one-node cluster over TCP: import, offload
+to an archive store, metadata backup, offline export), `brew linkage --test`
+and the glibc 2.39 ceiling check. The pinned Homebrew containers could not be
+used: their image downloads from ghcr.io kept resetting. ARM64 was built on
+rhea because ostrich, dodo, emu and kiwi were running benchmarks. Uploaded
+assets matched the manifest digests; `scripts/check-bottles --download`
+passed for every formula after the bottle block was merged.
+
+Installed from the published bottles on raptor, ostrich, dodo, emu, kiwi, rhea
+and moa (`brew install --force-bottle`): `poured_from_bottle=true` and
+`brew linkage --test` passed on all seven. moa's first download failed
+(GitHub CDN) and succeeded on retry. The running daemons were not restarted.
