@@ -1,15 +1,9 @@
 class AgentSudo < Formula
   desc "Brokered sudo for machines where coding agents do the typing"
   homepage "https://github.com/tpurtell/agent-sudo"
-  url "https://github.com/tpurtell/agent-sudo/releases/download/v0.1.0/agent-sudo-0.1.0.tar.gz"
-  sha256 "c86df894e74a62712a210448938322fbdb2bfb4db7c19e9aed58f5552c63ce1b"
+  url "https://github.com/tpurtell/agent-sudo/releases/download/v0.2.0/agent-sudo-0.2.0.tar.gz"
+  sha256 "d709851d4404faf026ed3853b94ffeaa2fe86601d26221a240b7e8a7e1969c6b"
   license any_of: ["Apache-2.0", "MIT"]
-
-  bottle do
-    root_url "https://github.com/tpurtell/local-ai-tap/releases/download/bottles-20260928-1"
-    sha256 arm64_linux:  "0d014d6467a1eaec7edc6da400bb3d67ddbda44ced617414ad9ba8c578b23e53"
-    sha256 x86_64_linux: "49c3c2aba19772b3f01fbe261e12481ad09614afe26f3a094ead62babe74258a"
-  end
 
   depends_on "linux-pam" => :build
   depends_on "patchelf" => :build
