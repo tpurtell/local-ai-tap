@@ -7,6 +7,9 @@ Homebrew packages for Linux ARM64 (aarch64) and AMD64 (x86_64):
 - `rdmapipe`: stream Unix pipes over RDMA.
 - `rdmasync`: rsync-derived file synchronization with RDMA bulk transfers.
 - `rdma-core`: shared RDMA libraries, hardware providers, and diagnostic tools.
+- `sparknest`: a distributed filesystem over RDMA for model caches (a shared
+  Hugging Face hub across hosts), with explicit placement. Cluster setup:
+  [INSTALL.md](https://github.com/tpurtell/sparknest/blob/main/docs/INSTALL.md).
 
 Install on a Linux machine with [Homebrew](https://brew.sh/) installed:
 
