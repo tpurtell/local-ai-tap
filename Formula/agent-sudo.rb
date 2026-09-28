@@ -5,6 +5,12 @@ class AgentSudo < Formula
   sha256 "d709851d4404faf026ed3853b94ffeaa2fe86601d26221a240b7e8a7e1969c6b"
   license any_of: ["Apache-2.0", "MIT"]
 
+  bottle do
+    root_url "https://github.com/tpurtell/local-ai-tap/releases/download/bottles-20260928-3"
+    sha256 arm64_linux:  "51bf4cf461ad8a1abc65c0acbaf8723162225bee2d20f68b4b8419a7b3d285a2"
+    sha256 x86_64_linux: "b7ccbde7f62bb6dd7663332dda7bcabc838e55969f9e3fefca12b6ab2f960e8d"
+  end
+
   depends_on "linux-pam" => :build
   depends_on "patchelf" => :build
   depends_on "pkgconf" => :build
