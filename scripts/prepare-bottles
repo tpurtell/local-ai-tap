@@ -16,11 +16,15 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("release_tag")
 parser.add_argument("output", type=Path)
 parser.add_argument("builds", type=Path, nargs=2)
+parser.add_argument("--formula", action="append", default=[],
+                    help="release only these formulae (default: every formula in the tap)")
 args = parser.parse_args()
 root = Path(__file__).resolve().parent.parent
 assert re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", args.release_tag)
 root_url = f"https://github.com/tpurtell/local-ai-tap/releases/download/{args.release_tag}"
-formulae = {p.stem: p for p in (root / "Formula").rglob("*.rb")}
+formulae = {p.stem: p for p in (root / "Formula").rglob("*.rb")
+            if not args.formula or p.stem in args.formula}
+assert not args.formula or set(args.formula) == formulae.keys(), "Unknown --formula"
 expected = {(name, arch) for name in formulae for arch in ("arm64_linux", "x86_64_linux")}
 records = {}
 copies = []

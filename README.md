@@ -7,6 +7,8 @@ Homebrew packages for Linux ARM64 (aarch64) and AMD64 (x86_64):
 - `rdmapipe`: stream Unix pipes over RDMA.
 - `rdmasync`: rsync-derived file synchronization with RDMA bulk transfers.
 - `rdma-core`: shared RDMA libraries, hardware providers, and diagnostic tools.
+- `agent-sudo`: brokered sudo for machines where coding agents do the typing;
+  requests are approved from your phone. See [agent-sudo](#agent-sudo) below.
 - `sparknest`: a distributed filesystem over RDMA for model caches (a shared
   Hugging Face hub across hosts), with explicit placement. Cluster setup:
   [INSTALL.md](https://github.com/tpurtell/sparknest/blob/main/docs/INSTALL.md).
@@ -78,6 +80,22 @@ dependencies and licenses, and install within Homebrew's managed directories.
 `$(brew --prefix rdmasync)/libexec/bin/rsync-ssl` and its daemon manual is named
 `rdmasyncd.conf(5)` to avoid collisions.
 
+## agent-sudo
+
+```sh
+brew install tpurtell/local-ai/agent-sudo
+sudo "$(brew --prefix)/bin/agent-sudo-setup" --enroll https://YOUR-SERVICE TOKEN
+agent-sudo-hostd skill install          # as your user: teach your coding agents
+```
+
+`agent-sudo` is setuid root and its relay runs as root, so they are not run from the
+Homebrew prefix, which your user and your agents can write. The formula packs them
+with the system loader and no embedded library paths; `agent-sudo-setup` verifies
+that bundle and installs it root-owned into `/usr/local`. After
+`brew upgrade agent-sudo`, run the setup command again without arguments.
+`agent-sudo-service init` creates a deployment of the approval service. Details:
+[github.com/tpurtell/agent-sudo](https://github.com/tpurtell/agent-sudo).
+
 This is a third-party tap, not a submission to `homebrew/core`. The packaging
 follows the applicable source, release, dependency, and installation practices
 in [Acceptable Formulae](https://docs.brew.sh/Acceptable-Formulae) and
@@ -95,5 +113,6 @@ their checksums. Native Spark checks and `scripts/test-fabric` cover ARM64 and
 real RDMA hardware. Never replace published source or bottle archives.
 
 The tap's packaging is MIT licensed. Packaged projects retain their own
-licenses: MIT for rdmapipe, GPL-3.0-or-later for rdmasync, and rdma-core's
+licenses: MIT for rdmapipe, GPL-3.0-or-later for rdmasync, Apache-2.0 OR MIT for
+agent-sudo, and rdma-core's
 upstream dual licenses and component-specific notices.

@@ -2,11 +2,13 @@
 # SPDX-License-Identifier: MIT
 # Rebuild installed tap packages for bottling on a native, dedicated host.
 set -euo pipefail
-if (($# != 2)); then
-  echo "Usage: $0 RELEASE_TAG EMPTY_OUTPUT_DIRECTORY" >&2
+if (($# < 2)); then
+  echo "Usage: $0 RELEASE_TAG EMPTY_OUTPUT_DIRECTORY [FORMULA...]" >&2
+  echo "Without FORMULA arguments every formula in the tap is rebuilt." >&2
   exit 2
 fi
 release_tag=$1
+only=("${@:3}")
 [[ $release_tag =~ ^[[:alnum:]][[:alnum:]._-]*$ ]]
 case $(uname -sm) in
   'Linux x86_64'|'Linux aarch64') ;;
@@ -37,7 +39,9 @@ shopt -s globstar nullglob
 formulae=()
 installed=()
 for file in "$tap"/Formula/**/*.rb; do
-  name="tpurtell/local-ai/$(basename "$file" .rb)"
+  short=$(basename "$file" .rb)
+  if ((${#only[@]})) && [[ ! " ${only[*]} " == *" $short "* ]]; then continue; fi
+  name="tpurtell/local-ai/$short"
   formulae+=("$name")
   if brew list --versions "$name" >/dev/null 2>&1; then installed+=("$name"); fi
 done

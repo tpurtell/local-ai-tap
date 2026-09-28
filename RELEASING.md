@@ -18,7 +18,10 @@ git pull --ff-only
 scripts/build-bottles-native bottles-YYYYMMDD-N bottle-output/native-ARCH
 ```
 
-Replace `ARCH` with `amd64` on raptor or `arm64` on the Spark. The script
+Replace `ARCH` with `amd64` on raptor or `arm64` on the Spark. To release only
+some formulae, list them after the output directory (for example `agent-sudo`) and
+pass the same names to `prepare-bottles` with `--formula NAME`. Each formula's
+bottle block records its own release URL, so the others keep their existing bottles. The script
 temporarily replaces the installed packages from this tap, saves the old kegs,
 uses `brew install --build-bottle`, runs tests and linkage checks, checks every
 packaged ELF file against the glibc 2.39 ceiling, and writes bottle archives
