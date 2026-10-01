@@ -135,3 +135,25 @@ Installed from the published bottles on raptor, ostrich, dodo, emu, kiwi, rhea
 and moa (`brew install --force-bottle`): `poured_from_bottle=true` and
 `brew linkage --test` passed on all seven. moa's first download failed
 (GitHub CDN) and succeeded on retry. The running daemons were not restarted.
+
+## sparknest 0.2.0 (bottles-20261001-1)
+
+Source: <https://github.com/tpurtell/sparknest/releases/tag/v0.2.0>, archive
+SHA-256 `9998daf31c1ae18c228d7cb4f47bb63c9cbaf132281248b3db10010050776338`
+(downloaded anonymously and matched).
+
+```text
+sparknest-0.2.0.arm64_linux.bottle.tar.gz   rhea (DGX Spark, aarch64; nice 19, 4 cores, beside GPU jobs)
+b3b2054dbc040ab52223254887fec1612d2e71d9bb49e18d6c49155e496d9c1a
+sparknest-0.2.0.x86_64_linux.bottle.tar.gz  raptor (x86_64)
+1f57ce65789447730a2848936dd811335cdf5b0938bb45ac4e9a5daca5741a2d
+```
+
+Built with `scripts/build-bottles-native bottles-20261001-1 DIR sparknest`
+from tap commit 299d40f; both passed `brew test`, `brew linkage --test` and
+the glibc 2.39 check. Uploaded assets matched the manifest digests. CI on the
+bottle commit d32fc63 passed (Ubuntu 24.04: source build, bottle install);
+the 0.2.0 formula commit failed the bottle check until its bottles existed,
+as expected. Installed from the published bottles on all seven hosts:
+`poured_from_bottle=true`, linkage passed, `libexec/sparknest/sparknest-hf-fetch`
+present. Daemons keep running 0.1.0 until their next restart.
