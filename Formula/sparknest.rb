@@ -1,16 +1,9 @@
 class Sparknest < Formula
   desc "RDMA distributed filesystem with explicit placement, built for model caches"
   homepage "https://github.com/tpurtell/sparknest"
-  url "https://github.com/tpurtell/sparknest/releases/download/v0.1.0/sparknest-0.1.0.tar.gz"
-  sha256 "ce7d16e98c8b1663859782933826c76735158429b4fab007ce187acee37a7e5e"
+  url "https://github.com/tpurtell/sparknest/releases/download/v0.2.0/sparknest-0.2.0.tar.gz"
+  sha256 "9998daf31c1ae18c228d7cb4f47bb63c9cbaf132281248b3db10010050776338"
   license any_of: ["MIT", "Apache-2.0"]
-
-  bottle do
-    root_url "https://github.com/tpurtell/local-ai-tap/releases/download/bottles-20260928-2"
-    rebuild 1
-    sha256 cellar: :any, arm64_linux:  "e1d012f3b702c405c9781d052e2beb9e90400ca8eb501e096b72127faa6f3bf3"
-    sha256 cellar: :any, x86_64_linux: "36f39bf0c9ab48f1dcac8799bab293743dd169d3abb6f0fbf3b3b75e130c649a"
-  end
 
   depends_on "rust" => :build
   depends_on :linux
@@ -30,6 +23,8 @@ class Sparknest < Formula
     (libexec/"sparknest").install "tools/drop-page-cache/drop-page-cache.c"
     # Installs a sudoers rule for exactly `systemctl restart sparknestd@CLUSTER`.
     bin.install "tools/allow-restart/sparknest-allow-restart"
+    # Hugging Face downloads: sparknestd runs it with the `hf` command's Python.
+    (libexec/"sparknest").install "tools/hf-fetch/sparknest-hf-fetch"
     inreplace pkgshare.glob("systemd/*.service"), "@BIN_DIR@", opt_bin
     doc.install "README.md", "docs/INSTALL.md"
   end
@@ -53,6 +48,7 @@ class Sparknest < Formula
     assert_match version.to_s, shell_output("#{bin}/sparknestd --version")
     assert_match "Usage: sparknest-drop-page-cache", shell_output("#{bin}/sparknest-drop-page-cache --help")
     assert_match "restart sparknestd@", shell_output("#{bin}/sparknest-allow-restart --help")
+    assert_path_exists libexec/"sparknest/sparknest-hf-fetch"
 
     # A one-node cluster over TCP without a mount: import, offload to an
     # archive store, snapshot the metadata, then rebuild the tree offline.
