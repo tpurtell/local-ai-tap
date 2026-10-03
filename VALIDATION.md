@@ -157,3 +157,23 @@ the 0.2.0 formula commit failed the bottle check until its bottles existed,
 as expected. Installed from the published bottles on all seven hosts:
 `poured_from_bottle=true`, linkage passed, `libexec/sparknest/sparknest-hf-fetch`
 present. Daemons keep running 0.1.0 until their next restart.
+
+## sparknest 0.2.1 (bottles-20261003-1)
+
+Source: <https://github.com/tpurtell/sparknest/releases/tag/v0.2.1>, archive
+SHA-256 `e9abaf157a3a7c8a0ccef96dca97f83a22bde6de425638f9e9b4567cdd636188` (downloaded anonymously and matched).
+
+```text
+sparknest-0.2.1.arm64_linux.bottle.tar.gz   rhea (DGX Spark, aarch64; nice 19, 4 cores, beside GPU jobs)
+a301afd517743067798012f27e360d236e2587c427e1e473884239aec20c77c6
+sparknest-0.2.1.x86_64_linux.bottle.tar.gz  raptor (x86_64)
+1736b229d6e2bcd80ed288a647798d4d10fa47c7614b3308d5688ae917d83e4a
+```
+
+Built from tap commit 9631680 with `scripts/build-bottles-native`
+(sparknest only); both passed `brew test`, `brew linkage --test` and the
+glibc 2.39 check. Uploaded assets matched the manifest digests. CI on the
+bottle commit d1466ff passed (Ubuntu 24.04: source build, bottle install).
+Installed from the published bottles on all seven hosts:
+`poured_from_bottle=true`, linkage passed, driver present. Daemons keep
+running 0.2.0 until their next restart.
