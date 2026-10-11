@@ -177,3 +177,60 @@ bottle commit d1466ff passed (Ubuntu 24.04: source build, bottle install).
 Installed from the published bottles on all seven hosts:
 `poured_from_bottle=true`, linkage passed, driver present. Daemons keep
 running 0.2.0 until their next restart.
+
+## sparknest 0.2.2 (bottles-20261011-1)
+
+Source: <https://github.com/tpurtell/sparknest/releases/tag/v0.2.2>, archive
+SHA-256 `29042783830128463409101c1ac0dd300e677bfd00481d3910b7cc5c99413d27`
+(downloaded anonymously and matched).
+
+```text
+sparknest-0.2.2.arm64_linux.bottle.tar.gz   rhea (DGX Spark, aarch64; nice 19, 4 cores)
+3096a6e4f3e53c2253bd50cf84afa599e6a8e3d34a38f8be10e8fe815b9aac36
+sparknest-0.2.2.x86_64_linux.bottle.tar.gz  raptor (x86_64)
+4718f7e06449ae9f659f0ef7ec52621a65e851e24d4adedbfb4e01c8a190d98a
+```
+
+Built with `scripts/build-bottles-native bottles-20261011-1 DIR sparknest`
+from tap commit 631c491; both passed `brew test`, `brew linkage --test` and
+the glibc 2.39 check. The first rhea build failed with "Text file busy": the
+daemon was restarted mid-build and ran from the build keg; the rerun passed.
+The first raptor build gave up on a brew download lock after fetching rust
+and llvm; the rerun passed. Uploaded assets matched the manifest digests and
+`scripts/check-bottles --download` passed. CI on the bottle commit c22901b
+passed (Ubuntu 24.04: source build, bottle install); the formula-only commit
+631c491 failed the bottle check until its bottles existed, as expected.
+
+Installed from the published bottles on all seven hosts:
+`poured_from_bottle=true`, linkage passed. ostrich, kiwi and moa stalled
+downloading from GitHub; the bottle was copied from rheas cache into theirs
+
+## sparknest 0.2.2 (bottles-20261011-1)
+
+Source: <https://github.com/tpurtell/sparknest/releases/tag/v0.2.2>, archive
+SHA-256 `29042783830128463409101c1ac0dd300e677bfd00481d3910b7cc5c99413d27`
+(downloaded anonymously and matched).
+
+```text
+sparknest-0.2.2.arm64_linux.bottle.tar.gz   rhea (DGX Spark, aarch64; nice 19, 4 cores)
+3096a6e4f3e53c2253bd50cf84afa599e6a8e3d34a38f8be10e8fe815b9aac36
+sparknest-0.2.2.x86_64_linux.bottle.tar.gz  raptor (x86_64)
+4718f7e06449ae9f659f0ef7ec52621a65e851e24d4adedbfb4e01c8a190d98a
+```
+
+Built with `scripts/build-bottles-native bottles-20261011-1 DIR sparknest`
+from tap commit 631c491; both passed `brew test`, `brew linkage --test` and
+the glibc 2.39 check. The first rhea build failed with "Text file busy": the
+daemon was restarted mid-build and ran from the build keg; the rerun passed.
+The first raptor build gave up on a brew download lock after fetching rust
+and llvm; the rerun passed. Uploaded assets matched the manifest digests and
+`scripts/check-bottles --download` passed. CI on the bottle commit c22901b
+passed (Ubuntu 24.04: source build, bottle install); the formula-only commit
+631c491 failed the bottle check until its bottles existed, as expected.
+
+Installed from the published bottles on all seven hosts:
+`poured_from_bottle=true`, linkage passed. ostrich, kiwi and moa stalled
+downloading from GitHub; the bottle was copied from rhea's cache into theirs
+(SHA-256 matched) and poured from there. All seven daemons restarted onto
+0.2.2 (7/7 serving after each). RDMA QPs per host fell from 46k-136k on the
+Sparks (0.2.1, a week up) to 5-15.
