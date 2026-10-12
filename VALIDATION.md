@@ -234,3 +234,32 @@ downloading from GitHub; the bottle was copied from rhea's cache into theirs
 (SHA-256 matched) and poured from there. All seven daemons restarted onto
 0.2.2 (7/7 serving after each). RDMA QPs per host fell from 46k-136k on the
 Sparks (0.2.1, a week up) to 5-15.
+
+## sparknest 0.3.0 (bottles-20261012-1)
+
+Source: <https://github.com/tpurtell/sparknest/releases/tag/v0.3.0>, archive
+SHA-256 `95cd0f8c9a4ea891fc7e06341fca105971036e4a50762eca29b981c70ec1b208`
+(downloaded anonymously and matched).
+
+```text
+sparknest-0.3.0.arm64_linux.bottle.tar.gz   rhea (DGX Spark, aarch64; nice 19, 4 cores)
+fb093e961ed25ac7a1fcae8baf430782d2384ad9a48443ae71ff52844a219fab
+sparknest-0.3.0.x86_64_linux.bottle.tar.gz  raptor (x86_64; nice 10)
+9d6898ef00959e57e3fa20b5859af930a2299f74966668573bd86c85f9b46685
+```
+
+Built with `scripts/build-bottles-native bottles-20261012-1 DIR sparknest`
+from tap commit c3b86b9; both passed `brew test`, `brew linkage --test` and
+the glibc 2.39 check. The first attempt on both hosts failed downloading
+the new rust 1.99.0_1 and llvm 23.1.3_1 bottles from ghcr; after `brew
+fetch llvm` on rhea the reruns passed. Uploaded assets matched the
+manifest digests. CI on the bottle commit 0e16fb5 passed (Ubuntu 24.04:
+source build, bottle install).
+
+Installed from the published bottles on all nine hosts (the seven fabric
+hosts, and the new off-grid hosts kakapo and oliver): `poured_from_bottle=true`,
+linkage passed. The bottles were fetched once on raptor and copied into
+each host's Homebrew cache (GitHub downloads stalled on some Sparks before).
+kakapo and oliver run Homebrew 7.0.9, which refused the untrusted
+dependency `rdma-core` until `brew trust --formula
+tpurtell/local-ai/rdma-core`. Running daemons stay on 0.2.2 until restarted.
