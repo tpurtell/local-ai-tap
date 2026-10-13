@@ -12,6 +12,8 @@ Homebrew packages for Linux ARM64 (aarch64) and AMD64 (x86_64):
 - `sparknest`: a distributed filesystem over RDMA for model caches (a shared
   Hugging Face hub across hosts), with explicit placement. Cluster setup:
   [INSTALL.md](https://github.com/tpurtell/sparknest/blob/main/docs/INSTALL.md).
+- `gpu-powerd-webui`: a responsive GPU dashboard consuming the local daemon stream
+  and optional SSH hosts. See [gpu-powerd-webui](#gpu-powerd-webui) below.
 - `gpu-powerd`: a thermal- and budget-aware NVIDIA power-limit daemon that holds
   hot cards at a target temperature. See [gpu-powerd](#gpu-powerd) below.
 
@@ -114,6 +116,21 @@ and starts both services. NVML is loaded from the NVIDIA driver at runtime. Afte
 `brew upgrade gpu-powerd`, run the setup command again. Details:
 [github.com/tpurtell/gpu-powerd](https://github.com/tpurtell/gpu-powerd).
 
+## gpu-powerd-webui
+
+```sh
+brew install tpurtell/local-ai/gpu-powerd-webui
+sudo "$(brew --prefix)/bin/gpu-powerd-webui-setup"
+```
+
+Installs a systemd service running as an unprivileged account, with root-owned
+Python/static files under `/usr/local/lib/gpu-powerd-webui`. Requires system
+Python 3.10+ and gpu-powerd's Unix sample stream; the WebSocket relay is optional.
+Default URL: `http://127.0.0.1:13456/`. Config: `/etc/gpu-powerd-webui/config.json`.
+For configured SSH hosts, pass `--user YOUR_USER --config /path/to/config.json`
+to setup. Re-run setup after a Homebrew upgrade. Details and configuration:
+[github.com/tpurtell/gpu-powerd-webui](https://github.com/tpurtell/gpu-powerd-webui).
+
 This is a third-party tap, not a submission to `homebrew/core`. The packaging
 follows the applicable source, release, dependency, and installation practices
 in [Acceptable Formulae](https://docs.brew.sh/Acceptable-Formulae) and
@@ -132,5 +149,5 @@ real RDMA hardware. Never replace published source or bottle archives.
 
 The tap's packaging is MIT licensed. Packaged projects retain their own
 licenses: MIT for rdmapipe, GPL-3.0-or-later for rdmasync, Apache-2.0 OR MIT for
-agent-sudo and gpu-powerd, and rdma-core's
+agent-sudo and gpu-powerd, MIT for gpu-powerd-webui, and rdma-core's
 upstream dual licenses and component-specific notices.
