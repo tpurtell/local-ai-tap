@@ -350,3 +350,29 @@ The initial tap CI at `8cc885e` verified both web UI bottle downloads, then stop
 because the concurrently released gpu-powerd 0.1.3 lacked an ARM64 bottle entry.
 That separate formula was subsequently completed at `2f07605`; tap-wide CI is
 rerunning. The web UI's scoped native/source/bottle checks above passed.
+
+## gpu-powerd 0.1.3 (bottles-20261013-3)
+
+Source: <https://github.com/tpurtell/gpu-powerd/releases/tag/v0.1.3>, archive
+SHA-256 `5f71adff9a34baf4eb9c55890f3b5707077bc9efd1f1754a1467dee1d11682ad`
+(downloaded anonymously and matched). 0.1.1 shipped as `bottles-20261013-2`
+(lock moved to root-owned `/run/gpu-powerd/daemon.lock`); 0.1.3 adds VRAM
+fields to the samples, with the per-process read off by default. 0.1.2 was
+skipped.
+
+```text
+gpu-powerd-0.1.3.arm64_linux.bottle.tar.gz   kakapo (DGX Spark build host, aarch64)
+4d86e936b0baa193f10c7b4f74e53ac3d69e6837d486ec41de3dc4a05c0a6792
+gpu-powerd-0.1.3.x86_64_linux.bottle.tar.gz  raptor (x86_64; nice 10)
+70ea494ebf3a2b3653cf92e78c67547afdb62897280f319754c357eeaf61f769
+```
+
+Built with `scripts/build-bottles-native bottles-20261013-3 DIR gpu-powerd`
+from tap commit 2d9755e; both passed `brew test`, `brew linkage --test` and
+the glibc 2.39 check (maximum GLIBC_2.34). A first raptor build took bottle
+rebuild 1 because the tap's `origin/HEAD` already pointed at the 0.1.1
+formula; it was discarded and rebuilt with `origin/HEAD` at the previous
+release commit, giving rebuild 0 on both. Uploaded assets matched the
+manifest digests. Installed from the published bottles on raptor and kakapo:
+`poured_from_bottle=true`, `brew test` and linkage passed; the kakapo copy
+was removed afterwards.
