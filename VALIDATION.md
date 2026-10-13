@@ -424,4 +424,6 @@ collected successfully: raptor reported 450 W per GPU, the WSL GPU 300 W, and
 Sparks null. A live mobile browser verified both framebuffer overlays and their
 absence for kakapo. The service runs v0.1.1 and remains enabled at boot.
 
-Tap Ubuntu 24.04 bottle CI passed at `7f7e6df`; the source build is still running.
+Both tap Ubuntu 24.04 source and bottle CI jobs passed at `7f7e6df`, including
+full tap bottle downloads/checksums, source/bottle installs, tests and ABI checks:
+https://github.com/tpurtell/local-ai-tap/actions/runs/38395834710.
