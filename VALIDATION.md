@@ -348,8 +348,11 @@ runtime state was archived outside the source checkout. gpu-powerd was not chang
 
 The initial tap CI at `8cc885e` verified both web UI bottle downloads, then stopped
 because the concurrently released gpu-powerd 0.1.3 lacked an ARM64 bottle entry.
-That separate formula was subsequently completed at `2f07605`; tap-wide CI is
-rerunning. The web UI's scoped native/source/bottle checks above passed.
+That separate formula was subsequently completed at `2f07605`. Both Ubuntu 24.04
+source and bottle jobs then passed in [run 38358706730](https://github.com/tpurtell/local-ai-tap/actions/runs/38358706730).
+The web UI also passed twelve real SSE disconnect/resume cycles against its
+installed service, with exactly one stream per visible tab; the server returned
+to three threads and its memory settled around 60 MiB after those checks.
 
 ## gpu-powerd 0.1.3 (bottles-20261013-3)
 
