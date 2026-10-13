@@ -12,6 +12,8 @@ Homebrew packages for Linux ARM64 (aarch64) and AMD64 (x86_64):
 - `sparknest`: a distributed filesystem over RDMA for model caches (a shared
   Hugging Face hub across hosts), with explicit placement. Cluster setup:
   [INSTALL.md](https://github.com/tpurtell/sparknest/blob/main/docs/INSTALL.md).
+- `gpu-powerd`: a thermal- and budget-aware NVIDIA power-limit daemon that holds
+  hot cards at a target temperature. See [gpu-powerd](#gpu-powerd) below.
 
 Install on a Linux machine with [Homebrew](https://brew.sh/) installed:
 
@@ -96,6 +98,22 @@ that bundle and installs it root-owned into `/usr/local`. After
 `agent-sudo-service init` creates a deployment of the approval service. Details:
 [github.com/tpurtell/agent-sudo](https://github.com/tpurtell/agent-sudo).
 
+## gpu-powerd
+
+```sh
+brew install tpurtell/local-ai/gpu-powerd
+gpu-powerd --check                      # read-only, no root needed
+sudo "$(brew --prefix)/bin/gpu-powerd-setup"
+```
+
+`gpu-powerd` sets GPU power limits as root, so like agent-sudo it is not run from
+the Homebrew prefix: the formula packs the daemon and its unprivileged WebSocket
+relay with the system loader and no embedded library paths, and
+`gpu-powerd-setup` verifies that bundle, installs it root-owned into `/usr/local`
+and starts both services. NVML is loaded from the NVIDIA driver at runtime. After
+`brew upgrade gpu-powerd`, run the setup command again. Details:
+[github.com/tpurtell/gpu-powerd](https://github.com/tpurtell/gpu-powerd).
+
 This is a third-party tap, not a submission to `homebrew/core`. The packaging
 follows the applicable source, release, dependency, and installation practices
 in [Acceptable Formulae](https://docs.brew.sh/Acceptable-Formulae) and
@@ -114,5 +132,5 @@ real RDMA hardware. Never replace published source or bottle archives.
 
 The tap's packaging is MIT licensed. Packaged projects retain their own
 licenses: MIT for rdmapipe, GPL-3.0-or-later for rdmasync, Apache-2.0 OR MIT for
-agent-sudo, and rdma-core's
+agent-sudo and gpu-powerd, and rdma-core's
 upstream dual licenses and component-specific notices.
