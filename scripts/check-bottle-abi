@@ -23,6 +23,12 @@ for name in sys.argv[1:]:
         for version in re.findall(r"Name: GLIBC_([0-9.]+)", symbols):
             assert tuple(map(int, version.split("."))) <= (2, 39), f"{path}: GLIBC_{version} exceeds 2.39"
             versions.add(version)
+    if not count and name == "tpurtell/local-ai/gpu-powerd-webui":
+        # This package intentionally contains Python, shell and static assets only.
+        app = prefix / "share/gpu-powerd-webui"
+        assert all((app / f).is_file() for f in ("server.py", "app.js", "index.html"))
+        print(f"PASS {name}: Python and static assets only; no ELF ABI requirements")
+        continue
     assert count, f"No ELF files checked for {name}"
     maximum = max(versions, key=lambda v: tuple(map(int, v.split("."))))
     print(f"PASS {name}: {count} ELF files, maximum required GLIBC_{maximum}")
