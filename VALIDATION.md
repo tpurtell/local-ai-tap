@@ -379,3 +379,49 @@ release commit, giving rebuild 0 on both. Uploaded assets matched the
 manifest digests. Installed from the published bottles on raptor and kakapo:
 `poured_from_bottle=true`, `brew test` and linkage passed; the kakapo copy
 was removed afterwards.
+
+## gpu-powerd-webui 0.1.1 (bottles-20261013-webui-2)
+
+Source: https://github.com/tpurtell/gpu-powerd-webui/releases/tag/v0.1.1,
+commit `377af85`, SHA-256
+`f32598db8673e5e7a39a6819c131a047d814bf14a401eb833eb9e27dc005c679`.
+Focused framebuffer GPUs in the Power chart show their recorded power limit
+as a dashed step line. Limits come from the daemon's measured `reading.limit_w`
+or `power.limit` in the existing SSH/local query. No extra collection command
+or GPU setting changes. Unified-memory hosts and unsupported values have no
+limit overlay. Limit history begins at upgrade; existing samples retain null
+limits. Buckets keep the latest recorded setting rather than averaging limits.
+
+Native bottles from tap commit `2598c4f`:
+
+```text
+raptor x86_64_linux aed83283bcd1e6ae2f2c4e49b549c299ea51d3c8032a8d258951d0c54579d1c4
+kakapo arm64_linux  5a3d93b0b61d91a71543cef4d1459813e4188da37ebed7dca71458fc154714a6
+```
+
+Used the shared fair queue's kakapo lock for ARM64 and its raptor CPU lock
+with nice 10 for Python/static AMD64 packaging. Both native builds passed
+Homebrew tests, linkage, and the Python/static ABI check. Both were reinstalled
+from their actual published bottles; receipts report `poured_from_bottle=true`.
+All uploaded asset digests matched the staged manifest before publication.
+`brew style` and `brew audit --strict --online` passed. Fleet transfer checks
+passed for ostrich, dodo, emu, and kiwi, both directions and both tools.
+
+Ten server regressions passed, covering measured/unsupported limits, exclusion
+of unified hosts, schema upgrades preserving history, raw limit series and
+latest-setting buckets. Browser regressions verify dashed step geometry, axis
+bounds, focus/metric/Spark conditions, tooltips, live limit updates, independent
+draw statistics, and history pruning, plus the existing mobile/lifecycle suite.
+Web UI GitHub CI passed on Python 3.10, 3.12, and 3.14 and in Chrome:
+https://github.com/tpurtell/gpu-powerd-webui/actions/runs/38395388464.
+Integration checks used real daemon and SSH readings and upgraded a consistent
+copy of the running database without altering its existing samples.
+
+Applied the poured package to raptor's system service through agent-sudo, keeping
+port 13456, its nine-host config (including kakapo), and SQLite history. A private
+history/config backup was saved before upgrade. All nine hosts and ten GPUs
+collected successfully: raptor reported 450 W per GPU, the WSL GPU 300 W, and
+Sparks null. A live mobile browser verified both framebuffer overlays and their
+absence for kakapo. The service runs v0.1.1 and remains enabled at boot.
+
+Tap Ubuntu 24.04 bottle CI passed at `7f7e6df`; the source build is still running.
