@@ -301,3 +301,52 @@ read both RTX PRO 6000 cards read-only (default config, PI controller, 600 W
 plan). The kakapo install was removed afterwards; Sparks don't run the daemon.
 `gpu-powerd-setup` (the root daemon install) was not run: that is the
 operator's step on raptor.
+
+## gpu-powerd-webui 0.1.0 (bottles-20261013-webui-1)
+
+Source: https://github.com/tpurtell/gpu-powerd-webui/releases/tag/v0.1.0.
+The archive contains one clean initial commit, MIT license, examples,
+server/browser regression tests, static assets, and a systemd installer. Personal
+host configuration, history, logs, sockets, and browser artifacts are excluded.
+Source SHA-256: `7a20efbeb9e14f120c03f479c5770b9ebba7047b46467ef7f4148709cd30283c`.
+
+Native builds from tap commit `eebab47`:
+
+```text
+raptor x86_64_linux b49e8fdc7fd57ea2c2e72494bef155e876aa1179bef8aba0402fe52491bd6605
+rhea   arm64_linux  61150ce2b1109f08515386a6a36b506cc3d9b4e0db28b11c6f7b0955cdcfa97f
+```
+
+Both passed `brew test`, `brew linkage --test`, and the package ABI check. The
+payload is Python/shell/static files and contains no ELF files or compiled CPU
+requirements. ARM64 packaging used the shared fair queue's rhea lock. AMD64
+packaging used a raptor CPU lock in that queue, with nice 10; it only copies scripts
+and tests configuration and never accesses GPU hardware. Full build logs and
+manifest are in `bottle-output/gpu-powerd-webui-20261013`.
+
+Both architectures were reinstalled from the actual published bottles:
+`poured_from_bottle=true`, Homebrew tests and linkage passed. Uploaded GitHub
+asset digests matched the manifest, and both published bottle downloads matched
+SHA-256. `brew style` and `brew audit --strict --online` passed. `scripts/test-fabric`
+passed against ostrich, dodo, emu, and kiwi, both tools and both directions.
+
+The web UI repository's GitHub CI passed on Python 3.10, 3.12, and 3.14 and ran
+its browser regression suite. Browser checks covered 320/390/768/1280 px widths,
+independent filters after hiding the two-GPU host, all-hidden recovery, legend
+highlighting/statistics, request races, repeated suspension/resume, and history
+pruning. An integration check consumed the real daemon stream, stored samples in
+SQLite, and checked HTTP history and SSE. Legacy daemon versions without VRAM
+fields show unavailable memory; new `mem_used_mib`/`mem_total_mib` fields are accepted.
+
+Installed the poured package on raptor with `gpu-powerd-webui-setup --user tj`
+through agent-sudo. The unprivileged system service is enabled at boot and serves
+port 13456 using root-owned application files, config in `/etc/gpu-powerd-webui`,
+and history in `/var/lib/gpu-powerd-webui`. Existing history was migrated; all
+eight hosts and nine GPUs collected successfully. A browser check against the
+installed service passed mobile layout, filters, and legend highlighting. Old
+runtime state was archived outside the source checkout. gpu-powerd was not changed.
+
+The initial tap CI at `8cc885e` verified both web UI bottle downloads, then stopped
+because the concurrently released gpu-powerd 0.1.3 lacked an ARM64 bottle entry.
+That separate formula was subsequently completed at `2f07605`; tap-wide CI is
+rerunning. The web UI's scoped native/source/bottle checks above passed.
