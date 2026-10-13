@@ -263,3 +263,41 @@ each host's Homebrew cache (GitHub downloads stalled on some Sparks before).
 kakapo and oliver run Homebrew 7.0.9, which refused the untrusted
 dependency `rdma-core` until `brew trust --formula
 tpurtell/local-ai/rdma-core`. Running daemons stay on 0.2.2 until restarted.
+
+## gpu-powerd 0.1.0 (bottles-20261013-1)
+
+Source: <https://github.com/tpurtell/gpu-powerd/releases/tag/v0.1.0>, archive
+`v0.1.0.tar.gz` SHA-256
+`279542c6d7d862ce90709ec676affce18e195efa926b4133d68f9f05c2fa262e`
+(downloaded anonymously and matched). First tap release.
+
+```text
+gpu-powerd-0.1.0.arm64_linux.bottle.tar.gz   kakapo (DGX Spark build host, aarch64)
+8ac81ce58a48652f64f9475f2736edabae96c1a214ab5abed6bba0675d0fe0fc
+gpu-powerd-0.1.0.x86_64_linux.bottle.tar.gz  raptor (x86_64; nice 10)
+e054d74ed5efa76f89a227c7d51040dfd4f71b4c82200116f2461c1dade5c2d2
+```
+
+Built with `scripts/build-bottles-native bottles-20261013-1 DIR gpu-powerd`
+from tap commit e8aa3c5; both passed `brew test`, `brew linkage --test` and
+the glibc 2.39 check (maximum GLIBC_2.34). The root bundle's `gpu-powerd`
+and `gpu-powerd-ws` use the system loader with no RPATH/RUNPATH, and
+`gpu-powerd-setup --check` reported the bundle verified on both
+architectures. The first ARM64 attempt (ostrich) was moved to kakapo, the
+build host that never serves; on both, GHCR stalled on the rust and llvm
+bottles, and `brew install` exited nonzero after pouring from a cache seeded
+with copies from rhea and ostrich that matched the manifest digests, so the
+script stopped before `brew test`. The rerun on kakapo with a complete cache
+passed. Uploaded assets matched the manifest digests and
+`scripts/check-bottles --download` passed for every formula. CI on the
+bottle commit 19e7e86 passed ([run](https://github.com/tpurtell/local-ai-tap/actions/runs/38352402494),
+Ubuntu 24.04: source build, bottle install). The formula-only commit e8aa3c5 failed CI's bottle check until its bottles
+existed, as expected.
+
+Installed from the published bottles with `brew install
+tpurtell/local-ai/gpu-powerd` on raptor and kakapo: `poured_from_bottle=true`,
+`brew linkage --test` and `brew test` passed. `gpu-powerd --check` on raptor
+read both RTX PRO 6000 cards read-only (default config, PI controller, 600 W
+plan). The kakapo install was removed afterwards; Sparks don't run the daemon.
+`gpu-powerd-setup` (the root daemon install) was not run: that is the
+operator's step on raptor.
