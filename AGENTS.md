@@ -3,8 +3,12 @@
 - Publish Linux ARM64 and AMD64 bottles for every formula release, including
   dependencies maintained in this tap. Source-only publication is not the
   normal release process. Keep source builds available as a fallback.
-- Build ARM64 natively on a DGX Spark (ostrich, dodo, emu, or kiwi); build
-  AMD64 natively on raptor. Do not cross-compile. Native containers are fine.
+- Build ARM64 natively on a DGX Spark (ostrich, dodo, emu, kiwi, rhea, moa,
+  or kakapo); build AMD64 natively on raptor. Prefer kakapo, which never
+  serves. Take the build host's own lock through raptor's fair queue
+  (`scripts/hw/hwlock.py --locks kakapo`, `rhea`, `moa`, or `sparks` for
+  ostrich, dodo, emu and kiwi, from the cuteafd repo). Do not cross-compile.
+  Native containers are fine.
 - Use Homebrew's default bottle CPU baseline and check that all packaged ELF
   files require glibc no newer than Homebrew's 2.39 baseline. Do not use
   host-specific CPU tuning. Pinned clean build images are also available via
