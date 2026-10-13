@@ -5,6 +5,12 @@ class GpuPowerd < Formula
   sha256 "5f71adff9a34baf4eb9c55890f3b5707077bc9efd1f1754a1467dee1d11682ad"
   license any_of: ["Apache-2.0", "MIT"]
 
+  bottle do
+    root_url "https://github.com/tpurtell/local-ai-tap/releases/download/bottles-20261013-3"
+    sha256 arm64_linux:  "4d86e936b0baa193f10c7b4f74e53ac3d69e6837d486ec41de3dc4a05c0a6792"
+    sha256 x86_64_linux: "70ea494ebf3a2b3653cf92e78c67547afdb62897280f319754c357eeaf61f769"
+  end
+
   depends_on "patchelf" => :build
   depends_on "rust" => :build
   depends_on :linux
