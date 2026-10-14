@@ -1,15 +1,9 @@
 class Sparknest < Formula
   desc "RDMA distributed filesystem with explicit placement, built for model caches"
   homepage "https://github.com/tpurtell/sparknest"
-  url "https://github.com/tpurtell/sparknest/releases/download/v0.3.0/sparknest-0.3.0.tar.gz"
-  sha256 "95cd0f8c9a4ea891fc7e06341fca105971036e4a50762eca29b981c70ec1b208"
+  url "https://github.com/tpurtell/sparknest/releases/download/v0.4.0/sparknest-0.4.0.tar.gz"
+  sha256 "d6f07df6fd21257289ee8505d7c73477b5568aef8a348d96a45460019753538b"
   license any_of: ["MIT", "Apache-2.0"]
-
-  bottle do
-    root_url "https://github.com/tpurtell/local-ai-tap/releases/download/bottles-20261012-1"
-    sha256 cellar: :any, arm64_linux:  "fb093e961ed25ac7a1fcae8baf430782d2384ad9a48443ae71ff52844a219fab"
-    sha256 cellar: :any, x86_64_linux: "9d6898ef00959e57e3fa20b5859af930a2299f74966668573bd86c85f9b46685"
-  end
 
   depends_on "rust" => :build
   depends_on :linux
@@ -31,6 +25,7 @@ class Sparknest < Formula
     bin.install "tools/allow-restart/sparknest-allow-restart"
     # Hugging Face downloads: sparknestd runs it with the `hf` command's Python.
     (libexec/"sparknest").install "tools/hf-fetch/sparknest-hf-fetch"
+    bin.install "tools/rdma-counters/sparknest-rdma-counters"
     inreplace pkgshare.glob("systemd/*.service"), "@BIN_DIR@", opt_bin
     doc.install "README.md", "docs/INSTALL.md"
   end
@@ -55,6 +50,7 @@ class Sparknest < Formula
     assert_match "Usage: sparknest-drop-page-cache", shell_output("#{bin}/sparknest-drop-page-cache --help")
     assert_match "restart sparknestd@", shell_output("#{bin}/sparknest-allow-restart --help")
     assert_path_exists libexec/"sparknest/sparknest-hf-fetch"
+    assert_match "RDMA counters", shell_output("#{bin}/sparknest-rdma-counters --help")
 
     # A one-node cluster over TCP without a mount: import, offload to an
     # archive store, snapshot the metadata, then rebuild the tree offline.
