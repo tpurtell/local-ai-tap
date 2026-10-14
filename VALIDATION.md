@@ -427,3 +427,28 @@ absence for kakapo. The service runs v0.1.1 and remains enabled at boot.
 Both tap Ubuntu 24.04 source and bottle CI jobs passed at `7f7e6df`, including
 full tap bottle downloads/checksums, source/bottle installs, tests and ABI checks:
 https://github.com/tpurtell/local-ai-tap/actions/runs/38395834710.
+
+## sparknest 0.4.0 (bottles-20261015-1)
+
+Source: <https://github.com/tpurtell/sparknest/releases/tag/v0.4.0>, archive
+SHA-256 `d6f07df6fd21257289ee8505d7c73477b5568aef8a348d96a45460019753538b`
+(downloaded anonymously and matched).
+
+```text
+sparknest-0.4.0.arm64_linux.bottle.tar.gz   rhea (DGX Spark, aarch64; nice 19, 4 cores)
+d11a11c8e8fc9f4d60ea47416f3c5d7d1123006d582feac4f8f3286980389bc0
+sparknest-0.4.0.x86_64_linux.bottle.tar.gz  raptor (x86_64; nice 10)
+a46ce707e95097fd09df05e4832694eb9673c314a258ba159dfe4061f06b8d56
+```
+
+Built with `scripts/build-bottles-native bottles-20261015-1 DIR sparknest`
+from tap commit 184ebb3 (llvm and rust fetched first); both passed `brew
+test` (including the new `sparknest-rdma-counters --help`), `brew linkage
+--test` and the glibc 2.39 check. Uploaded assets matched the manifest
+digests. CI on the bottle commit 2a1decf passed (Ubuntu 24.04: source
+build, bottle install).
+
+Installed from the published bottles (seeded into each host's cache) on all
+nine hosts: `poured_from_bottle=true`, linkage passed, and each host's
+existing node.toml passes `sparknestd --check`. Daemons stay on 0.3.0 until
+the LLM pipeline restarts them.
