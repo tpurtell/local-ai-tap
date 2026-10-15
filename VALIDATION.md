@@ -452,3 +452,31 @@ Installed from the published bottles (seeded into each host's cache) on all
 nine hosts: `poured_from_bottle=true`, linkage passed, and each host's
 existing node.toml passes `sparknestd --check`. Daemons stay on 0.3.0 until
 the LLM pipeline restarts them.
+
+## sparknest 0.4.1 (bottles-20261015-2)
+
+Source: <https://github.com/tpurtell/sparknest/releases/tag/v0.4.1>, archive
+SHA-256 `b346fdc460912fdb702635ccc7628fd385d1c7c71dcb27f94cdb211b46e7fcf4`
+(downloaded anonymously and matched).
+
+```text
+sparknest-0.4.1.arm64_linux.bottle.tar.gz   rhea (DGX Spark, aarch64; nice 19, 4 cores)
+907b7236a5b974c4e8fcf1c213eae7b4d275717257f0ead1a3431d18a328c6c0
+sparknest-0.4.1.x86_64_linux.bottle.tar.gz  raptor (x86_64; nice 10)
+3096445e7485d37bc5a12d843c7d7dd04469af7a1cbf595a91aab4eb6eceafda
+```
+
+Built with `scripts/build-bottles-native bottles-20261015-2 DIR sparknest`
+from tap commit 5bbdbe5; both passed `brew test`, `brew linkage --test` and
+the glibc 2.39 check. The first arm64 build came out as `rebuild 1`: rhea's
+tap had already fetched the bottle-less 0.4.1 formula commit into
+`origin/main`, and Homebrew counted that revision. With `origin/main` back
+at 3eb521b (where raptor's was), the rebuild produced `rebuild 0`, matching
+amd64. Uploaded assets matched the manifest digests.
+CI on the bottle commit d13ebd6 passed (Ubuntu 24.04: source build, bottle
+install); the formula-only commit 5bbdbe5 failed as expected (no bottles yet).
+
+Installed from the published bottles (seeded into each host's cache) on all
+nine hosts: `poured_from_bottle=true`, linkage passed, and each host's
+existing node.toml passes `sparknestd --check`. Daemons stay on 0.4.0 until
+the LLM pipeline restarts them.
