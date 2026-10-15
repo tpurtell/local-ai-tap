@@ -508,3 +508,27 @@ leader (raptor) last; every host came back serving with its mount in about
 13 s. `du -s` over the mount (24,210 entries) after the restart: raptor
 0.3 s, Sparks and off-grid hosts 0.6–1.6 s (before: 5–12 s on the Sparks,
 3.7 s on oliver).
+
+## sparknest 0.4.3 (bottles-20261015-4)
+
+Source: <https://github.com/tpurtell/sparknest/releases/tag/v0.4.3>, archive
+SHA-256 `ece944e71c83f3ca3eddf71d76ffeacc11ce47b2001d4edb30ab6d49b8809f31`
+(downloaded anonymously and matched).
+
+```text
+sparknest-0.4.3.arm64_linux.bottle.tar.gz   rhea (DGX Spark, aarch64; nice 19, 4 cores)
+08c54524dc9e625f67d33dcabab4f2ec7a2ec5c71c30187f910e3db4b0368182
+sparknest-0.4.3.x86_64_linux.bottle.tar.gz  raptor (x86_64; nice 10)
+67ffc3d6218972613910e9fd4d93ffca7a8b4ba9c2312e36863f04be15cd9c71
+```
+
+Built with `scripts/build-bottles-native bottles-20261015-4 DIR sparknest`
+from tap commit 007fd5a, `origin/main` held at the last bottled commit
+(4bd8d6f) on both builders; both `rebuild 0`, both passed `brew test`,
+`brew linkage --test` and the glibc 2.39 check. Uploaded assets matched the
+manifest digests. CI on the bottle commit 90c5ad8 passed (Ubuntu 24.04:
+source build, bottle install).
+
+Installed from the published bottles (seeded into each host's cache) on all
+nine hosts: `poured_from_bottle=true`, linkage passed, each host's node.toml
+passes `sparknestd --check`. Daemons stay on 0.4.2 until restarted.
