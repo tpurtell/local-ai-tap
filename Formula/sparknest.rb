@@ -5,6 +5,12 @@ class Sparknest < Formula
   sha256 "7af96eb84a4f3180eecb03c7e539af633a93b3b71cb50765344ff7bc95b60b3d"
   license any_of: ["MIT", "Apache-2.0"]
 
+  bottle do
+    root_url "https://github.com/tpurtell/local-ai-tap/releases/download/bottles-20261017-1"
+    sha256 cellar: :any, arm64_linux:  "9054b5104b8bbf019ea4bcf8eadae1c42adf575705556742c234e865eb142e86"
+    sha256 cellar: :any, x86_64_linux: "c63d8dbef2139f556ce4165fb04a33835dc6d2eaa25c642db4722d17b22ba3cb"
+  end
+
   depends_on "rust" => :build
   depends_on :linux
   depends_on "tpurtell/local-ai/rdma-core"
