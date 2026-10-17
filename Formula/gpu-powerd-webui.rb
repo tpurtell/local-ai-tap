@@ -1,15 +1,9 @@
 class GpuPowerdWebui < Formula
-  desc "Responsive GPU dashboard for gpu-powerd telemetry and SSH hosts"
+  desc "GPU and system dashboard for gpu-powerd telemetry and SSH hosts"
   homepage "https://github.com/tpurtell/gpu-powerd-webui"
-  url "https://github.com/tpurtell/gpu-powerd-webui/releases/download/v0.1.1/gpu-powerd-webui-0.1.1.tar.gz"
-  sha256 "f32598db8673e5e7a39a6819c131a047d814bf14a401eb833eb9e27dc005c679"
+  url "https://github.com/tpurtell/gpu-powerd-webui/releases/download/v0.2.0/gpu-powerd-webui-0.2.0.tar.gz"
+  sha256 "268491726c3dca4ac7ca8fa449030aa64ef71acdda192b1f0a60051a115e3b23"
   license "MIT"
-
-  bottle do
-    root_url "https://github.com/tpurtell/local-ai-tap/releases/download/bottles-20261013-webui-2"
-    sha256 cellar: :any_skip_relocation, arm64_linux:  "5a3d93b0b61d91a71543cef4d1459813e4188da37ebed7dca71458fc154714a6"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "aed83283bcd1e6ae2f2c4e49b549c299ea51d3c8032a8d258951d0c54579d1c4"
-  end
 
   depends_on :linux
 
