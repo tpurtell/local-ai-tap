@@ -557,3 +557,48 @@ Installed from the published bottles (seeded into each host's cache) on all
 nine hosts: `poured_from_bottle=true`, linkage passed, each host's node.toml
 passes `sparknestd --check`. Every host's kernel (7.0 nvidia, raptor 7.0,
 WSL2 6.18) accepts `TCP_RTO_MIN_US`. Daemons stay on 0.4.3 until restarted.
+
+
+## gpu-powerd-webui 0.2.0 (bottles-20261017-webui-1)
+
+Source: https://github.com/tpurtell/gpu-powerd-webui/releases/tag/v0.2.0,
+commit `7677924`, SHA-256
+`268491726c3dca4ac7ca8fa449030aa64ef71acdda192b1f0a60051a115e3b23`.
+Adds aggregate CPU, available RAM including reclaimable cache, and available
+filesystem space, collected directly through Linux APIs. CPU/RAM history is
+stored once per host, disk history once per configured host/path; existing GPU
+history is preserved. SSH hosts use a single shared Python 3 probe.
+
+Native bottles built from tap commit `f7a6b0c`:
+
+```text
+raptor x86_64_linux cd086960f03d4964890298ac77b7255d448207fb67387814d746c8c0ddfc14c1
+ostrich arm64_linux 6dc9f6c71d647a753c26cafbb628af2784aa890e83c38cd48b51253119350d8b
+```
+
+Both builds passed Homebrew tests, linkage checks, and the Python/static ABI
+check. Both architectures were reinstalled from the actual published bottles;
+their receipts report `poured_from_bottle=true`. All uploaded assets matched
+their staged SHA-256 digests before bottle publication. Homebrew style, strict
+online audit, and every tap bottle's download/checksum checks passed. The fleet
+transfer check ran under the shared fair queue's sparks lock and passed for
+ostrich, dodo, emu and kiwi, both tools and both directions.
+
+Seventeen Python tests passed, including CPU interval/guest/iowait accounting,
+reboots and counter resets, cache-aware available RAM, unprivileged disk space,
+missing paths, independent GPU/system health, retention, history bucketing and
+preservation. Browser regressions passed for host metric focus/statistics,
+multi-path disks, live updates and the existing mobile/GPU/lifecycle behavior.
+Live integration and the installed dashboard verified nine hosts, ten GPUs,
+and eleven disk paths. The system service was updated through agent-sudo on
+port 13456, kept its persistent SSH-agent integration, and preserved all
+non-expired GPU history (also backed up consistently before upgrade). CPU, RAM
+and disk history each returned the expected 9/9/11 series; SQLite quick_check
+passed. Live Chrome checks passed at 320, 390, 768 and 1280 px with no page errors.
+
+Web UI CI (Python 3.10/3.12/3.14 and Chrome):
+https://github.com/tpurtell/gpu-powerd-webui/actions/runs/38995791985.
+Ubuntu 24.04 source/bottle verification for the published formula:
+https://github.com/tpurtell/local-ai-tap/actions/runs/38995955520.
+Build logs, metadata and immutable release staging:
+`bottle-output/gpu-powerd-webui-20261017`.
