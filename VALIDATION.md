@@ -629,3 +629,29 @@ Installed from the published bottles on all nine hosts:
 `sparknestd --check`, `sparknest-add-lan-standby --dry-run` validates the
 `lan` edit on kiwi and does nothing on kakapo (off-grid). Daemons stay on
 0.4.4 until restarted.
+
+## sparknest 0.5.1 (bottles-20261018-1)
+
+Source: https://github.com/tpurtell/sparknest/releases/download/v0.5.1/sparknest-0.5.1.tar.gz
+(SHA-256 5d473c5a16365459997fe7b3b83fbcf1f4d3f6f3e0b58d845f1e15ddd1ccfbc5).
+
+```text
+sparknest-0.5.1.arm64_linux.bottle.tar.gz   ostrich (DGX Spark, aarch64)
+46b446a285b41ccad2dd380d3bdbe3cd053bad1abbb72c4a6e3c03b3d6da09a5
+sparknest-0.5.1.x86_64_linux.bottle.tar.gz  raptor (x86_64)
+982ae278df3acdb585079043832c1fc69c162855203a972118fe305a47feae64
+```
+
+Built with `scripts/build-bottles-native bottles-20261018-1 DIR sparknest`
+from tap commit 8eaf4ab on both builders; both `rebuild 0`, both passed
+`brew test`, `brew linkage --test` and the glibc 2.39 check. Uploaded assets
+matched the manifest digests; `brew style`, `brew audit --strict --online`
+and `scripts/check-bottles --download` passed. CI on the bottle commit
+0cf4cb0 passed (Ubuntu 24.04: source build, bottle install); the formula-only
+commit 8eaf4ab failed as expected ("missing arm64_linux bottle").
+
+Installed from the published bottles on all nine hosts:
+`poured_from_bottle=true` (raptor and ostrich reinstalled with
+`--force-bottle` over their build kegs), linkage passed on the builders, and
+each host's node.toml passes `sparknestd --check`. Daemons stay on 0.5.0
+until restarted.
