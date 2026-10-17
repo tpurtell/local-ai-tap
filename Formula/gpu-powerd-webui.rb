@@ -5,6 +5,12 @@ class GpuPowerdWebui < Formula
   sha256 "268491726c3dca4ac7ca8fa449030aa64ef71acdda192b1f0a60051a115e3b23"
   license "MIT"
 
+  bottle do
+    root_url "https://github.com/tpurtell/local-ai-tap/releases/download/bottles-20261017-webui-1"
+    sha256 cellar: :any_skip_relocation, arm64_linux:  "6dc9f6c71d647a753c26cafbb628af2784aa890e83c38cd48b51253119350d8b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "cd086960f03d4964890298ac77b7255d448207fb67387814d746c8c0ddfc14c1"
+  end
+
   depends_on :linux
 
   def install
