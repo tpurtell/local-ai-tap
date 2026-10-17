@@ -532,3 +532,28 @@ source build, bottle install).
 Installed from the published bottles (seeded into each host's cache) on all
 nine hosts: `poured_from_bottle=true`, linkage passed, each host's node.toml
 passes `sparknestd --check`. Daemons stay on 0.4.2 until restarted.
+
+## sparknest 0.4.4 (bottles-20261017-1)
+
+Source: <https://github.com/tpurtell/sparknest/releases/tag/v0.4.4>, archive
+SHA-256 `7af96eb84a4f3180eecb03c7e539af633a93b3b71cb50765344ff7bc95b60b3d`
+(downloaded anonymously and matched).
+
+```text
+sparknest-0.4.4.arm64_linux.bottle.tar.gz   rhea (DGX Spark, aarch64; nice 19, 4 cores)
+9054b5104b8bbf019ea4bcf8eadae1c42adf575705556742c234e865eb142e86
+sparknest-0.4.4.x86_64_linux.bottle.tar.gz  raptor (x86_64; nice 10)
+c63d8dbef2139f556ce4165fb04a33835dc6d2eaa25c642db4722d17b22ba3cb
+```
+
+Built with `scripts/build-bottles-native bottles-20261017-1 DIR sparknest`
+from tap commit 72ad0bd, `origin/main` held at the last bottled commit
+(b5a3e67) on both builders; both `rebuild 0`, both passed `brew test`,
+`brew linkage --test` and the glibc 2.39 check. Uploaded assets matched the
+manifest digests. CI on the bottle commit 8c6981b passed (Ubuntu 24.04:
+source build, bottle install).
+
+Installed from the published bottles (seeded into each host's cache) on all
+nine hosts: `poured_from_bottle=true`, linkage passed, each host's node.toml
+passes `sparknestd --check`. Every host's kernel (7.0 nvidia, raptor 7.0,
+WSL2 6.18) accepts `TCP_RTO_MIN_US`. Daemons stay on 0.4.3 until restarted.
