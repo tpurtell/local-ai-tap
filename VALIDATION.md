@@ -602,3 +602,30 @@ Ubuntu 24.04 source/bottle verification for the published formula:
 https://github.com/tpurtell/local-ai-tap/actions/runs/38995955520.
 Build logs, metadata and immutable release staging:
 `bottle-output/gpu-powerd-webui-20261017`.
+
+## sparknest 0.5.0 (bottles-20261017-2)
+
+Source: <https://github.com/tpurtell/sparknest/releases/tag/v0.5.0>, archive
+SHA-256 `bfdee615b4b6389eb2db497f04f1a8fe2d2f923b703b3e581fd2781fd9523179`
+(downloaded anonymously and matched).
+
+```text
+sparknest-0.5.0.arm64_linux.bottle.tar.gz   rhea (DGX Spark, aarch64; nice 19, 4 jobs)
+8d23e76d4f99d4dbda682f2aa599bf8d90f4540d33bd2417236f971bf1e13aa2
+sparknest-0.5.0.x86_64_linux.bottle.tar.gz  raptor (x86_64; nice 10)
+01973e39617a5deccb0979f854c6647a90b96ae80b410a2b04e20c7c8d65e647
+```
+
+Built with `scripts/build-bottles-native bottles-20261017-2 DIR sparknest`
+from tap commit 6575066 on both builders; both `rebuild 0`, both passed
+`brew test`, `brew linkage --test` and the glibc 2.39 check. Uploaded assets
+matched the manifest digests; `brew style`, `brew audit --strict --online`
+and `scripts/check-bottles --download` passed. CI on the bottle commit
+25eb075 passed (Ubuntu 24.04: source build, bottle install); the formula-only
+commit 6575066 failed as expected ("missing arm64_linux bottle").
+
+Installed from the published bottles on all nine hosts:
+`poured_from_bottle=true`, linkage passed, each host's node.toml passes
+`sparknestd --check`, `sparknest-add-lan-standby --dry-run` validates the
+`lan` edit on kiwi and does nothing on kakapo (off-grid). Daemons stay on
+0.4.4 until restarted.
