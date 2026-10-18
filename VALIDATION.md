@@ -655,3 +655,31 @@ Installed from the published bottles on all nine hosts:
 `--force-bottle` over their build kegs), linkage passed on the builders, and
 each host's node.toml passes `sparknestd --check`. Daemons stay on 0.5.0
 until restarted.
+
+## sparknest 0.5.2, 0.5.3 and 0.5.4 (bottles-20261018-2, -3, -4)
+
+```text
+0.5.2  source f24f6dca0fd95606a159ac64ff1ec2ff04a7afc8674681ca7f81259d19a67f50
+       arm64_linux  09fe14a31311715cf0669c95ae1f2cc9f06991edda5966fc126fbd02a70f3486
+       x86_64_linux 66cd27520b8814a6cec16c538c64139c7b76d025e6d4befc365dfe05db96aa22
+0.5.3  source 5184202e379c2b23ba510ab7f5c08772f020448888e0917499ff0eba1bb48bf8
+       arm64_linux  ca8d97074fc64e9fd05266da3be50869e541658b0cc5458c70d787097ca9beb6
+       x86_64_linux 78e93e0f16eac5182e8b367049bbcfda5550857188c893a379a407484195acbd
+0.5.4  source bda0953f9ce98fdd1419c5efa19fbe8bb009a2f0ea9b564523cfc33551415c55
+       arm64_linux  672b031f419645925cafeb94b1431838592af65a3518af77f34df04077e0744c
+       x86_64_linux 52a6001bfb4fd7be9491a89efe20c3e283f77ddf9c61e3f436a29e61577f090d
+```
+
+Each built with `scripts/build-bottles-native bottles-20261018-N DIR sparknest`
+on ostrich (arm64) and raptor (x86_64) from its formula-only commit (5c09cb3,
+c9770c5, 0f572ea). Uploaded assets matched the manifest digests;
+`brew style`, `brew audit --strict --online` and `scripts/check-bottles
+--download` passed. CI passed on the bottle commits 0d0cf68, 4d5d3a5 and cd95ba3;
+the formula-only commits failed as expected ("missing arm64_linux bottle").
+
+Installed from the published bottles on all nine hosts each time
+(`poured_from_bottle=true`; raptor and ostrich with `--force-bottle`), each
+host's node.toml passes `sparknestd --check`, and the daemons were
+restarted onto each release: off-grid learners, then the Sparks, raptor
+(leader) last. 0.5.3 fixed a model-list regression of 0.5.2 (snapshots
+named by 64-hex ids), 0.5.4 one of 0.5.3 (stale snapshots split repos).
