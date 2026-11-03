@@ -1,15 +1,10 @@
 class Sparknest < Formula
   desc "RDMA distributed filesystem with explicit placement, built for model caches"
   homepage "https://github.com/tpurtell/sparknest"
-  url "https://github.com/tpurtell/sparknest/releases/download/v0.7.2/sparknest-0.7.2.tar.gz"
-  sha256 "5ebfd7c2477e64e7f63726d3c50c7d3a0639d233cb2d2330475665628cbe6e43"
+  url "https://github.com/tpurtell/sparknest/releases/download/v0.7.3/sparknest-0.7.3.tar.gz"
+  sha256 "fd869256e99c9636a8846da28a5198a0570148a3750674f68cd6482e5fff01ff"
   license any_of: ["MIT", "Apache-2.0"]
 
-  bottle do
-    root_url "https://github.com/tpurtell/local-ai-tap/releases/download/bottles-20261031-2"
-    sha256 cellar: :any, arm64_linux:  "71a52448be21645520706e09181cc6972b84c586cf485e5339f5b3b4d85f5f70"
-    sha256 cellar: :any, x86_64_linux: "a13289d5e0cfb4a72d8fb671778c9bf9c91e4d67964f2c4045074a57f3bf8f62"
-  end
 
   depends_on "rust" => :build
   depends_on :linux
