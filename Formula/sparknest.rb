@@ -1,15 +1,9 @@
 class Sparknest < Formula
   desc "RDMA distributed filesystem with explicit placement, built for model caches"
   homepage "https://github.com/tpurtell/sparknest"
-  url "https://github.com/tpurtell/sparknest/releases/download/v0.8.4/sparknest-0.8.4.tar.gz"
-  sha256 "85fbd739f4a22154fd4d3e4775596977660232932828d593a8aa7526d14fcc14"
+  url "https://github.com/tpurtell/sparknest/releases/download/v0.8.5/sparknest-0.8.5.tar.gz"
+  sha256 "2019191cdc358662c54fbdd823d303abcf3725e3c65280d168bd0ed2901cad62"
   license any_of: ["MIT", "Apache-2.0"]
-
-  bottle do
-    root_url "https://github.com/tpurtell/local-ai-tap/releases/download/bottles-20261112-1"
-    sha256 cellar: :any, arm64_linux:  "02c5abea026555ca79f8803322b8d1ad45038869386183e1b334e0bbbcb2b3ee"
-    sha256 cellar: :any, x86_64_linux: "721a838e36c2b7e7e3b483333652028c89d15a21c65a355bb1629035aa85a42d"
-  end
 
   depends_on "rust" => :build
   depends_on :linux
@@ -34,8 +28,11 @@ class Sparknest < Formula
     bin.install "tools/rdma-counters/sparknest-rdma-counters"
     # Turns on the 10G standby (ADR-057) in node.toml, after the upgrade.
     bin.install "tools/lan-standby/sparknest-add-lan-standby"
+    # Tunes the host's RoCE NICs for SparkNest's fabric class (docs/LOSSLESS.md).
+    bin.install "tools/fabric-qos/sparknest-fabric-qos"
+    pkgshare.install "tools/fabric-qos/sparknest-qos.rsc", "tools/fabric-qos/sparknest-qos-rollback.rsc"
     inreplace pkgshare.glob("systemd/*.service"), "@BIN_DIR@", opt_bin
-    doc.install "README.md", "docs/INSTALL.md"
+    doc.install "README.md", "docs/INSTALL.md", "docs/LOSSLESS.md"
   end
 
   def caveats
@@ -60,6 +57,7 @@ class Sparknest < Formula
     assert_path_exists libexec/"sparknest/sparknest-hf-fetch"
     assert_match "RDMA counters", shell_output("#{bin}/sparknest-rdma-counters --help")
     assert_match "standby", shell_output("#{bin}/sparknest-add-lan-standby --help")
+    assert_match "fabric class", shell_output("#{bin}/sparknest-fabric-qos --help")
 
     # A one-node cluster over TCP without a mount: import, offload to an
     # archive store, snapshot the metadata, then rebuild the tree offline.
